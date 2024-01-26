@@ -116,11 +116,9 @@ class Add:
         if num1_positive and num2_positive:
             return self.add_two_positive_nums(num1, num2)
         if num1_positive:
-            # return sub.sub(num1, num2.to_positive())
-            raise ValueError("Negative numbers are not supported yet.")
+            return sub(num1, num2.to_positive())
         if num2_positive:
-            # return sub.sub(num2, num1.to_positive())
-            raise ValueError("Negative numbers are not supported yet.")
+            return sub(num2, num1.to_positive())
         return bignum(f"-{self.add_two_positive_nums(num1.to_positive(), num2.to_positive())}")
     
     def add(self, *args) -> bignum:
@@ -133,3 +131,4 @@ class Add:
         return final_result
 
 add = Add().add
+from .sub import sub
