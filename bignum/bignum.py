@@ -8,7 +8,7 @@ class bignum:
     def __init__(self, value: str):
         self.__val = str(value)
         if not bignum.is_num(self.__val):
-            raise ValueError("Invalid value. Provide a number.")
+            raise ValueError(f"Invalid value: {self.__val}")
         
     def __str__(self) -> str:
         return self.__val
@@ -222,7 +222,8 @@ class bignum:
         """
         if places < 0:
             return self.shift_decimals_right(abs(places), filter_)
-        whole = self.get_whole()
+        neg = self.is_negative()
+        whole = self.get_whole().to_positive()
         decimal = self.get_decimal() if self.get_decimal().filtered() != '0' else ''
         if places >= len(whole):
             whole = bignum(f"0.{'0'*(places-len(whole))}{whole}{decimal}")
@@ -230,6 +231,7 @@ class bignum:
         num_left = whole[:~(places-1)]
         num_right = whole[~(places-1):]
         result = bignum(f"{num_left}.{num_right}{decimal}")
+        result = result.to_negative() if neg else result
         return result.filtered() if filter_ else result
     
     def shift_decimals_right(self, places, filter_=False) -> bignum:
@@ -255,12 +257,14 @@ class bignum:
         places = int(places)
         if places < 0:
             return self.shift_decimals_left(abs(places), filter_)
-        whole, decimal = self.get_whole(), self.get_decimal()
+        neg = self.is_negative()
+        whole, decimal = self.get_whole().to_positive(), self.get_decimal()
         if places > len(decimal):
             decimal = str(decimal) + '0'*(places-len(decimal))
         whole = f"{whole}{decimal[:places]}"
         decimal = f"{decimal[places:]}"
         result = bignum(f"{whole}.{decimal}" if decimal else whole)
+        result = result.to_negative() if neg else result
         return result.filtered() if filter_ else result
     
     def filter_whole(self) -> bignum:
@@ -276,9 +280,8 @@ class bignum:
             >>> bignum("-00192").filter_whole()
             bignum('-192')
         """
-        result = bignum((f"-{str(self.get_whole()[1:]).lstrip('0')}" if self.get_whole().is_negative() else str(self.get_whole()).lstrip('0')) or '0')
-        if str(result) == '-': result = bignum('0')
-        return result
+        result = (f"-{str(self.get_whole()[1:]).lstrip('0')}" if self.get_whole().is_negative() else str(self.get_whole()).lstrip('0')) or '0'
+        return bignum('0') if str(result) == '-' else bignum(result)
     
     def filter_decimal(self) -> bignum:
         """
@@ -339,7 +342,7 @@ class bignum:
             num1_whole = num1.get_whole()
             num2_whole = num2.get_whole()
             if len(num1_whole) != len(num2_whole): 
-                return len(num1_whole) > len(num2_whole)
+                return len(num1_whole) > len(num2_whole), False
             
             num1_whole_chunks = num1.chunk_whole(chunk_size)
             num2_whole_chunks = num2.chunk_whole(chunk_size)
@@ -347,9 +350,9 @@ class bignum:
                 if num1_whole_chunk != num2_whole_chunk:
                     return (num1_whole_chunk > num2_whole_chunk, False)
             
-            num1, num2 = bignum.equalize_decimals(num1, num2, decimal_only=True)
+            num1, num2 = bignum.equalize_decimals(num1, num2)
             num1_decimal_chunks = num1.chunk_decimal(chunk_size)
-            num2_decimal_chunks = num1.chunk_decimal(chunk_size)
+            num2_decimal_chunks = num2.chunk_decimal(chunk_size)
             for (num1_decimal_chunk, num2_decimal_chunk) in zip(num1_decimal_chunks, num2_decimal_chunks):
                 if num1_decimal_chunk != num2_decimal_chunk:
                     return (num1_decimal_chunk > num2_decimal_chunk, False)
@@ -363,7 +366,7 @@ class bignum:
             return True
         if self.is_negative() and val.is_negative(): 
             gt, eq = gt_positive(abs(self), abs(val))
-            return not gt if not eq else False
+            return False if eq else not gt
         return gt_positive(self, val)[0]
     
     
@@ -384,7 +387,3 @@ class bignum:
         return (self < bignum(val) or self == bignum(val))
     
 from .operations.add import add
-        
-if __name__ == '__main__':
-    b = bignum("-0020.01900")
-    print(b.filtered())
