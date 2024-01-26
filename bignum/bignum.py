@@ -124,9 +124,10 @@ class bignum:
         Args:
             chunk_size (int): The size of each chunk.
             reverse (bool): Whether to iterate from least significant digit (default: False).
+            item_type: The datatype of each chunk in the resulting chunk list
 
         Returns:
-            Iterable[int]: An iterable of integers representing the chunks.
+            Iterable[]: An iterable of the value split into chunks
             
         Examples:
             >>> b = bignum("1234567890.123400")
@@ -150,9 +151,11 @@ class bignum:
         Args:
             chunk_size (int): The size of each chunk.
             reverse (bool): Whether to iterate from least significant digit (default: False).
+            filter_before_chunking (bool): Whether to filter out the value before chunking (default: False)
+            item_type: The datatype of each chunk in the resulting chunk list
 
         Returns:
-            Iterable[int]: An iterable of integers representing the chunks.
+            Iterable[]: An iterable of the value split into chunks
             
         Examples:
             >>> b = bignum("1234567890.123400")
