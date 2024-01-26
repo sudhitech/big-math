@@ -24,6 +24,7 @@ class bignum:
         return bignum(self.__val[idx])
     
     def __abs__(self) -> bignum:
+        """Return the absolute value of the number."""
         return bignum(self.__val[1:] if self.is_negative() else self.__val)
     
     def __len__(self) -> bignum:
@@ -68,6 +69,12 @@ class bignum:
     def is_positive(self) -> bool: 
         """Check if the value is positive."""
         return not self.__val.startswith('-')
+    
+    to_positive = __abs__
+    
+    def to_negative(self) -> bool:
+        """Return the negative form of the number."""
+        return bignum(f"{'-' if self.is_positive() else ''}{self.__val}")
     
     def split(self, x: str) -> list[bignum]: 
         """
