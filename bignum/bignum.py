@@ -76,6 +76,26 @@ class bignum:
         """Return the negative form of the number."""
         return bignum(f"{'-' if self.is_positive() else ''}{self.__val}")
     
+    def rjust(self, width: int, fillchar=' ') -> bignum:
+        """
+        Return a right-justified string of length width
+
+        Args:
+            width (int): The width of the resulting value.
+            fillchar (str): The character used for filling (default: ' ').
+        """
+        return bignum(self.__val.rjust(width, fillchar))
+    
+    def ljust(self, width: int, fillchar=' ') -> bignum:
+        """
+        Return a left-justified string of length width
+
+        Args:
+            width (int): The width of the resulting value.
+            fillchar (str): The character used for filling (default: ' ').
+        """
+        return bignum(self.__val.ljust(width, fillchar))
+    
     def split(self, x: str) -> list[bignum]: 
         """
         Split the value into a list of bignum instances based on a delimiter.
