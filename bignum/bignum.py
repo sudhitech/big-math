@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import Tuple, Union, Iterable
 import gmpy2
 
-
 class bignum:
     __slots__ = {'__val'}
     
@@ -16,6 +15,9 @@ class bignum:
     
     def __int__(self) -> str:
         return int(str(self.get_whole()))
+    
+    def __float__(self) -> str:
+        return float(str(self.__val))
     
     def __repr__(self) -> str:
         return f"bignum('{self.__val}')"
@@ -378,6 +380,7 @@ class bignum:
         """Check if a value is less than or equal to another value."""
         return (self < bignum(val) or self == bignum(val))
     
+from .operations.add import add
         
 if __name__ == '__main__':
     b = bignum("-0020.01900")
