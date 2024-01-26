@@ -14,6 +14,9 @@ class bignum:
     def __str__(self) -> str:
         return self.__val
     
+    def __int__(self) -> str:
+        return int(str(self.get_whole()))
+    
     def __repr__(self) -> str:
         return f"bignum('{self.__val}')"
     
@@ -112,7 +115,7 @@ class bignum:
         """Returns an integer or a float, based on the presence of a decimal part."""
         return float(self.__val) if self.has_decimal() else int(self.filtered())
     
-    def chunk_whole(self, chunk_size: int, reverse=False) -> Iterable[int]:
+    def chunk_whole(self, chunk_size: int, reverse=False, item_type = str) -> Iterable[int]:
         """
         Split the whole part of the value into smaller chunks of integers.
 
@@ -135,10 +138,10 @@ class bignum:
         chunk_iterator = range(len(whole), 0, -chunk_size)
         if not reverse:
             chunk_iterator = reversed(chunk_iterator)
-        chunks = (int(str(whole[max(i-chunk_size, 0):i])) for i in chunk_iterator)
+        chunks = (item_type(str(whole[max(i-chunk_size, 0):i])) for i in chunk_iterator)
         return chunks
     
-    def chunk_decimal(self, chunk_size: int, reverse=False, filter_before_chunking=False) -> Iterable[int]:
+    def chunk_decimal(self, chunk_size: int, reverse=False, filter_before_chunking=False, item_type = str) -> Iterable[int]:
         """
         Split the decimal part of the value into smaller chunks of integers.
 
@@ -160,7 +163,7 @@ class bignum:
 
         """
         decimal = self.filter_decimal() if filter_before_chunking else self.get_decimal()
-        return decimal.chunk_whole(chunk_size, reverse)
+        return decimal.chunk_whole(chunk_size, reverse, item_type=item_type)
     
     @staticmethod
     def equalize_decimals(num1: bignum, num2: bignum, decimal_only=False) -> Tuple[bignum, bignum]:
