@@ -17,14 +17,14 @@ class Divide:
             >>> Divide.raw_quotient("15", "3")
             bignum('5')
         """
-        return bignum(str(eval(dividend) // eval(divisor)))
+        return bignum(str(eval(dividend) / eval(divisor)))
     
     def divide_two_whole_nums(self, num1: bignum, num2: bignum) -> bignum:
         """Calculate the quotient of dividing two whole numbers."""
         if int(num2) == 0:
             raise ValueError("Division by zero")
         if len(num1) <= self.chunk_size and len(num2) <= self.chunk_size:
-            return bignum(int(num1) // int(num2))
+            return bignum(int(num1) / int(num2))
         
         # Divide the large input into smaller chunks
         num1, num2 = sorted([num1, num2], key=len, reverse=True)
